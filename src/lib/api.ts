@@ -82,13 +82,23 @@ export async function fetchApi<T>(
 export async function getProducts(
   page = 1,
   limit = 12,
-  categoryId?: string
+  filters?: {
+    categoryId?: string;
+    search?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }
 ): Promise<PaginatedResponse<Product>> {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
-  if (categoryId) params.set("categoryId", categoryId);
+  if (filters?.categoryId) params.set("categoryId", filters.categoryId);
+  if (filters?.search) params.set("name", filters.search);
+  if (filters?.minPrice !== undefined)
+    params.set("minPrice", String(filters.minPrice));
+  if (filters?.maxPrice !== undefined)
+    params.set("maxPrice", String(filters.maxPrice));
   return fetchApi(`/products?${params}`);
 }
 
